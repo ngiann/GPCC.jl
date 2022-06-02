@@ -26,7 +26,8 @@ module GPCC
     include("getprobabilities.jl")
 
 
-    export simulatedata, gpcc, performcv, getprobabilities
-    
+    export simulatedata, gpcc, performcv, getprobabilities,
+           OU, Matern32, Matern52, RBF
+
 
 end

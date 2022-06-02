@@ -11,9 +11,18 @@ end
 
 #---------------------------------------------------
 
-function OU(xᵢ,xⱼ ; ρ=1.0)
+abstract type AbstractKernelFunction end
 
-    ℓ = sqrt(ρ)
+"Ornstein–Uhlenbeck / Matern12 kernel function"
+struct OU <: AbstractKernelFunction
+    # empty on purpose
+end
+
+string(kernel::OU) = "OU"
+
+function (kernel::OU)(xᵢ,xⱼ ; ρ=ρ)
+
+    ℓ = ρ
 
     r = norm(xᵢ - xⱼ)
 
@@ -24,13 +33,27 @@ end
 
 #---------------------------------------------------
 
-rbf(xᵢ,xⱼ ; ρ=1.0) = exp(-0.5*(xᵢ-xⱼ)^2/(2ρ))
+"RBF kernel function"
+struct RBF <: AbstractKernelFunction
+    # empty on purpose
+end
+
+string(kernel::RBF) = "RBF"
+
+(kernel::RBF)(xᵢ,xⱼ ; ρ=ρ) = exp(-0.5*(xᵢ-xⱼ)^2/(2ρ))
 
 #---------------------------------------------------
 
-function matern32(xᵢ,xⱼ ; ρ=1.0)
+"Matern32 kernel function"
+struct Matern32 <: AbstractKernelFunction
+    # empty on purpose
+end
 
-    ℓ = sqrt(ρ)
+string(kernel::Matern32) = "Matern32"
+
+function (kernel::Matern32)(xᵢ,xⱼ ; ρ=ρ)
+
+    ℓ = ρ
 
     r = norm(xᵢ - xⱼ)
 
@@ -40,15 +63,23 @@ end
 
 #---------------------------------------------------
 
-function matern52(xᵢ,xⱼ ; ρ=1.0)
+"Matern52 kernel function"
+struct Matern52 <: AbstractKernelFunction
+    # empty on purpose
+end
 
-    ℓ = sqrt(ρ)
+string(kernel::Matern52) = "Matern52"
+
+function (kernel::Matern52)(xᵢ,xⱼ ; ρ=ρ)
+
+    ℓ = ρ
 
     r = norm(xᵢ - xⱼ)
 
     (1 + sqrt(5)*r/ρ +( 5*r^2)/(3*ρ^2)) * exp(- sqrt(5)*r/ρ)
 
 end
+
 
 #---------------------------------------------------
 
