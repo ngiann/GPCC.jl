@@ -1,5 +1,5 @@
 """
-    minopt, pred, posterioroffsetvector, scalingcoeff, lengthscale = gpcc(tarray, yarray, stdarray; kernel = kernel, delays = delays, iterations = iterations, seed = 1, numberofrestarts = 1, initialrandom = 50, rhomin = 0.1, rhomax = 20.0)
+    minopt, pred, posterioroffsetvector, scalingcoeff, lengthscale = gpcc(tarray, yarray, stdarray; kernel = kernel, delays = delays, iterations = iterations, seed = 1, numberofrestarts = 1, initialrandom = 1, rhomin = 0.1, rhomax = 20.0)
 
 Fit Gaussian Process Cross Correlation (GPCC) model for a given vector of delays.
 
@@ -104,7 +104,7 @@ function gpccfixdelay(tarray, yarray, stdarray; kernel::AbstractKernelFunction =
     #---------------------------------------------------------------------
 
     informuser(seed = seed, iterations = iterations, numberofrestarts = numberofrestarts,
-                JITTER = JITTER, ρmin = ρmin, ρmax = ρmax, Σb = Σb)
+                initialrandom = initialrandom, JITTER = JITTER, ρmin = ρmin, ρmax = ρmax, Σb = Σb)
 
 
     #---------------------------------------------------------------------
