@@ -1,5 +1,5 @@
 """
-out = performcv(tobs, yobs, σobs; delays = delays, iterations = 1, seedcv = 1, kernel = kernel, numberofrestarts = 1, numberoffolds = 5, plotting = false, rhomin = 0.1, rhomax = 20.0)
+out = performcv(tobs, yobs, σobs; delays = delays, iterations = 1, seedcv = 1, kernel = kernel, numberofrestarts = 1, initialrandom = 1, numberoffolds = 5, plotting = false, rhomin = 0.1, rhomax = 20.0)
 
 Performs cross-validation for Gaussian Process Cross Correlation (GPCC) model.
 
@@ -38,7 +38,9 @@ julia> out2 = performcv(tobs, yobs, σobs, iterations=1000, numberofrestarts=3, 
 julia> getprobabilities([out1, out2]) # estimate posterior probabilities, first entry corresponding to true delays should be higher
 ```
 """
-function performcv(tobs, yobs, σobs; delays = delays, iterations = 1, seedcv = 1, kernel::AbstractKernelFunction = kernel, numberofrestarts = 1, initialrandom = 1, numberoffolds = 5, plotting = false, rhomin = 0.1, rhomax = 20.0)
+
+function performcv(tobs, yobs, σobs; delays = delays, iterations = 1, seedcv = 1, kernel = kernel, numberofrestarts = 1, initialrandom = 1, numberoffolds = 5, plotting = false, rhomin = 0.1, rhomax = 20.0)
+
 
     # let user know what is run
     str = @sprintf("\nRunning CV with %d number of folds\n\n", numberoffolds)
