@@ -15,7 +15,7 @@ Input arguments
 - `tobs`: Array of arrays of observation times. There are L number of inner arrays. The l-th array holds the observation times of the l-th band.
 - `yobs`: Array of arrays of fluxes. Same structure as `tobs`
 - `σobs`: Array of error measurements. Same structure as `tobs`
-- `kernel`: Specifies GP kernel function. Options are GPCC.OU / GPCC.rbf / GPCC.matern32
+- `kernel`: Specifies GP kernel function. Options are OU(), RBF(), Matern32(), Matern52()
 - `delays`: L-dimensional vector of delays.
 - `iterations`: maximum number of iterations done when optimising marginal-likelihood of GP, i.e. optimising hyperparameters.
 - `seedcv`: Random seed that controls the random sampling of initial solutions for GPCC and the random generation of cross-validation folds.
@@ -33,12 +33,14 @@ out: vector of test log-likelihoods for each fold
 ```julia-repl
 
 julia> tobs, yobs, σobs = simulatedata(); # simulate data with default delays [0;2;6]
-julia> out1 = performcv(tobs, yobs, σobs, iterations=1000, numberofrestarts=3, delays = [0;2;6], kernel = GPCC.matern32); # perform CV with true delays
-julia> out2 = performcv(tobs, yobs, σobs, iterations=1000, numberofrestarts=3, delays = [0;2.1;5.9], kernel = GPCC.matern32); # julia> # perform CV with perturbed delays
+julia> out1 = performcv(tobs, yobs, σobs, iterations=1000, numberofrestarts=3, delays = [0;2;6], kernel = Matern32()); # perform CV with true delays
+julia> out2 = performcv(tobs, yobs, σobs, iterations=1000, numberofrestarts=3, delays = [0;2.1;5.9], kernel = Matern32()); # julia> # perform CV with perturbed delays
 julia> getprobabilities([out1, out2]) # estimate posterior probabilities, first entry corresponding to true delays should be higher
 ```
 """
+
 function performcv(tobs, yobs, σobs; delays = delays, iterations = 1, seedcv = 1, kernel = kernel, numberofrestarts = 1, initialrandom = 1, numberoffolds = 5, plotting = false, rhomin = 0.1, rhomax = 20.0)
+
 
     # let user know what is run
     str = @sprintf("\nRunning CV with %d number of folds\n\n", numberoffolds)

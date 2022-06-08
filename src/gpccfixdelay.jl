@@ -14,7 +14,7 @@ Input arguments
 - `tarray`: Array of arrays of observation times. There are L number of inner arrays. The l-th array holds the observation times of the l-th band.
 - `yarray`: Array of arrays of fluxes. Same structure as `tarray`
 - `stdarray`: Array of error measurements. Same structure as `tarray`
-- `kernel`: Specifies GP kernel function. Options are GPCC.OU / GPCC.rbf / GPCC.matern32 / GPCC.matern52
+- `kernel`: Specifies GP kernel function. Options are OU(), RBF(), Matern32(), Matern52()
 - `delays`: L-dimensional vector of delays.
 - `iterations`: maximum number of iterations done when optimising marginal-likelihood of GP, i.e. optimising hyperparameters.
 - `seed`: Random seed controls the random sampling of initial solution.
@@ -35,7 +35,7 @@ Returned arguments
 # Example
 ```julia-repl
 julia> tobs, yobs, σobs = simulatedata(); # produce synthetic data
-julia> minopt, pred, posterioroffsetvector, scalingcoeff, lengthscale = gpcc(tobs, yobs, σobs; kernel = GPCC.rbf, delays = [0.0;2.0;6.0], iterations = 1000);  # fit GPCC
+julia> minopt, pred, posterioroffsetvector, scalingcoeff, lengthscale = gpcc(tobs, yobs, σobs; kernel = RBF(), delays = [0.0;2.0;6.0], iterations = 1000);  # fit GPCC
 julia> trange = collect(-10:0.1:25); # define time interval for predictions
 julia> μpred, σpred = pred(trange) # obtain predictions
 julia> type(μpred), size(μpred) # predictions are also arrays of arrays, organised just like the data
@@ -43,7 +43,7 @@ julia> plot(trange, μpred[1], "b") # plot mean predictions for 1st band
 julia> fill_between(trange, μpred[1].+σpred[1], μpred[1].-σpred[1], color="b", alpha=0.3) # plot uncertainties for 1st band
 ```
 """
-function gpcc(tarray, yarray, stdarray; kernel = kernel, delays = delays, iterations = iterations, seed = 1, numberofrestarts = 1, initialrandom = 1, rhomin = 0.1, rhomax = 20.0)
+function gpcc(tarray, yarray, stdarray; kernel::AbstractKernelFunction = kernel, delays = delays, iterations = iterations, seed = 1, numberofrestarts = 1, initialrandom = 1, rhomin = 0.1, rhomax = 20.0)
 
     # Same function as below, but easier name for user to call
 
@@ -53,7 +53,7 @@ function gpcc(tarray, yarray, stdarray; kernel = kernel, delays = delays, iterat
 end
 
 
-function gpccfixdelay(tarray, yarray, stdarray; kernel = kernel, τ = τ, iterations = iterations, seed = 1, numberofrestarts = 1, initialrandom = 1, ρmin = 0.1, ρmax = 20.0)
+function gpccfixdelay(tarray, yarray, stdarray; kernel::AbstractKernelFunction = kernel, τ = τ, iterations = iterations, seed = 1, numberofrestarts = 1, initialrandom = 1, ρmin = 0.1, ρmax = 20.0)
 
     #---------------------------------------------------------------------
     # Fix random seed for reproducibility
