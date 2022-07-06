@@ -107,15 +107,15 @@ function gpccfixdelay(tarray, yarray, stdarray; kernel = kernel, τ = τ, iterat
 
     function unpack(param)
 
-        @assert(length(param) == 2L + 1)
+        @assert(length(param) == L + 1)
 
         local α =   makeα.(param[0L+1:1L])
 
-        local b =         (param[1L+1:2L])
+        # local b =         (param[1L+1:2L])
 
-        local ρ =    makeρ(param[2L+1])
+        local ρ =    makeρ(param[L+1])
 
-        return α, b, ρ
+        return α, ρ
 
     end
 
@@ -124,13 +124,16 @@ function gpccfixdelay(tarray, yarray, stdarray; kernel = kernel, τ = τ, iterat
     # Define objective as marginal log-likelihood and auxiliaries
     #---------------------------------------------------------------------
 
-    function objective(α, b, ρ)
+    @show b = mean.(yarray)
+
+    function objective(α, ρ)
 
         local K = delayedCovariance(kernel, α, τ, ρ, tarray)
 
         local KSobsB = K + Sobs
 
         makematrixsymmetric!(KSobsB)
+
 
         return logpdf(MvNormal(Q*b, KSobsB), Y)
 
@@ -191,7 +194,7 @@ function gpccfixdelay(tarray, yarray, stdarray; kernel = kernel, τ = τ, iterat
     #---------------------------------------------------------------------
 
     sampleunconstrainedsolution(i) = [invmakepositive.(sampleα());
-                                      sampleb();
+                                      #sampleb();
                                       invtransformbetween(initialρvalues[i], ρmin, ρmax)]
 
 
@@ -231,7 +234,7 @@ function gpccfixdelay(tarray, yarray, stdarray; kernel = kernel, τ = τ, iterat
     # instantiate learned kernel matrix
     #---------------------------------------------------------------------
 
-    @show α, b, ρ = unpack(paramopt)
+    @show α, ρ = unpack(paramopt)
 
     K = delayedCovariance(kernel, α, τ, ρ, tarray)
 
